@@ -86,7 +86,7 @@ const viewPendingApplns=(req,res)=>{
   
   
   // schedule Interview
-  const scheduleInterview=(req,res)=>{
+  const scheduleInterview=async (req,res)=>{
   console.log(req.body);
      
   let interview= new interviewSchema({
@@ -97,7 +97,7 @@ const viewPendingApplns=(req,res)=>{
     jid:req.body.jid  
   
   })
-  interview.save().then(data=>{
+  await interview.save().then(data=>{
      res.json({
          status:200,
          msg:"Inserted successfully",
@@ -112,12 +112,14 @@ const viewPendingApplns=(req,res)=>{
        })
      
    })
-  
-  
-    
- 
-    
-  
+   await applicationSchema.findOneAndUpdate({
+    jid:req.body.jid,aid:req.body.aid
+   },{status:"interviewscheduled"}).exec().then(dats=>{
+    console.log("done");
+   }).catch(err=>{
+    console.log(err);
+   })
+
   }
   
   //view all Interviesws 
