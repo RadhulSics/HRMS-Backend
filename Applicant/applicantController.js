@@ -282,14 +282,24 @@ const forgotPwd=(req,res)=>{
 
 //apply job
 
-const applyJob=(req,res)=>{
+const applyJob=async (req,res)=>{
   let date=new Date()
+
+let flag=0 
+  await applicationSchema.find({ aid:req.body.aid,jid:req.body.jid }).exec().then(datas=>{
+    console.log(datas);
+    if(datas.length>0)
+    flag=1
+  }).catch(errs=>{
+    console.log(errs);
+  })
   const application=new applicationSchema({
     aid:req.body.aid,
    date:date,
     jid:req.body.jid 
 
   })
+  if(flag==0){
   application.save().then(data=>{
       res.json({
           status:200,
@@ -305,6 +315,12 @@ const applyJob=(req,res)=>{
         })
       
     })
+  }else{
+    res.json({
+      status:409,
+      msg:"You Have Already applied for this Job"
+  })
+  }
 }
 
 //View  applicant interviews by ID
